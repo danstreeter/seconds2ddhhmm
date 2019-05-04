@@ -1,6 +1,8 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 import seconds2dd as sec
 import sys
+
+appVersion = "0.0.3"
 
 app = Flask(__name__)
 
@@ -11,12 +13,22 @@ def index():
 @app.route('/<int:seconds>')
 @app.route('/<int:seconds>/<hours>')
 def seconds(seconds, hours=7.5):
+    returnRaw = request.args.get('raw')
     response = sec.ddhhmmss(seconds, hours)
-    return response
+    if returnRaw:
+        return response
+    else:
+        return jsonify(
+            response=dict(
+                raw=response,
+                human=sec.parseValue(response)
+            ),
+            appVersion=appVersion
+        )
 
 @app.route('/version')
 def version():
-    return "0.0.2"
+    return appVersion
 
 if __name__ == '__main__':
     app.run(debug=False,host='0.0.0.0')

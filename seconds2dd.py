@@ -13,11 +13,17 @@ def ddhhmmss(seconds, hours=7.5):
     dhms += '{0:02d}'.format(seconds)
     return dhms
 
-# seconds = sys.argv[1]
-# if(len(sys.argv) < 3):
-#     hoursPerDay = 7.5
-# else:
-#     hoursPerDay = sys.argv[2]
+def parseValue(value):
+    humanStrings = [' day', ' hour', ' minute', ' second']
+    humanStrings.reverse()
+    ret = ''
+    for segment in value.split(":"):
+        if segment == "00":
+            continue
 
-# response = ddhhmmss(seconds, hoursPerDay)
-# print('{"items": [{"title":"'+response+'", "subtitle": "DD:HH:MM:SS"}]}')
+        ret += segment.lstrip("0")+humanStrings.pop()
+        if int(segment) > 1:
+            ret += "s"
+        ret +=", "
+
+    return ret.rstrip(", ")
